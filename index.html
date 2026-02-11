@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>式の展開と因数分解：構築と解体の数学的対称性 - 究極のアーカイブ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'media', // デバイスのテーマ設定に自動追従
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Inter"', '"Noto Sans JP"', 'sans-serif'],
+                        serif: ['"Noto Serif JP"', 'serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <!-- KaTeX CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.css">
+    <!-- KaTeX JS -->
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.9/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Serif+JP:wght@400;700&family=Noto+Sans+JP:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Inter', 'Noto Sans JP', sans-serif;
+            scroll-behavior: smooth;
+            line-height: 2.4; /* 行間を広げて読みやすく */
+            transition: background-color 0.3s, color 0.3s;
+            overflow-x: hidden;
+        }
+
+        .serif-text {
+            font-family: 'Noto Serif JP', serif;
+        }
+
+        /* Slide-out Panel Styles */
+        .quiz-panel {
+            transition: transform 0.5s cubic-bezier(0.19, 1, 0.22, 1);
+            transform: translateX(100%);
+            box-shadow: -10px 0 25px -5px rgba(0, 0, 0, 0.1);
+        }
+
+        .quiz-panel.active {
+            transform: translateX(0);
+        }
+
+        .glass-morphism {
+            background: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(226, 232, 240, 0.6);
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .glass-morphism {
+                background: rgba(15, 23, 42, 0.85);
+                border-bottom: 1px solid rgba(51, 65, 85, 0.6);
+            }
+        }
+
+        .content-card {
+            border-radius: 1.5rem;
+            padding: 4rem;
+            margin-bottom: 5rem;
+            box-shadow: 0 20px 40px -10px rgba(0,0,0,0.06);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .content-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.08);
+        }
+
+        .equation-box {
+            border-left: 6px solid #4f46e5;
+            background: linear-gradient(90deg, rgba(79, 70, 229, 0.05) 0%, transparent 100%);
+            padding: 3rem;
+            margin: 4rem 0;
+            font-size: 2.5rem;
+            font-weight: 800;
+            text-align: center;
+            border-radius: 0 1rem 1rem 0;
+            font-family: 'Noto Serif JP', serif;
+            letter-spacing: 0.05em;
+            overflow-x: auto;
+        }
+
+        .chapter-title {
+            position: relative;
+            padding-bottom: 1.5rem;
+            margin-bottom: 3.5rem;
+            font-size: 2.25rem;
+            font-weight: 900;
+            letter-spacing: -0.03em;
+            line-height: 1.3;
+            border-bottom: 1px solid #cbd5e1;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .chapter-title {
+                border-bottom: 1px solid #334155;
+            }
+        }
+
+        .chapter-title::after {
+            content: '';
+            position: absolute;
+            left: 0;
+            bottom: -1px;
+            width: 80px;
+            height: 4px;
+            background: #4f46e5;
+            border-radius: 2px;
+        }
+
+        .sub-section-title {
+            font-size: 1.6rem;
+            font-weight: 700;
+            margin-top: 4.5rem;
+            margin-bottom: 2rem;
+            display: flex;
+            align-items: center;
+            color: #312e81;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .sub-section-title {
+                color: #e0e7ff;
+            }
+        }
+
+        .sub-section-title::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 28px;
+            background: #6366f1;
+            margin-right: 16px;
+            border-radius: 99px;
+        }
+
+        p { margin-bottom: 2.5rem; font-size: 1.125rem; text-align: justify; letter-spacing: 0.04em; color: #334155; }
+        
+        @media (prefers-color-scheme: dark) {
+            p { color: #94a3b8; }
+        }
+
+        .diagram-box {
+            border-radius: 2rem;
+            padding: 4rem 2rem;
+            margin: 5rem 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);
+            overflow: hidden;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .diagram-box {
+                background-color: #0f172a;
+                border: 1px solid #1e293b;
+            }
+        }
+
+        .highlight-text {
+            background: linear-gradient(180deg, transparent 65%, #c7d2fe 65%);
+            font-weight: 700;
+            padding: 0 4px;
+            color: #1e1b4b;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .highlight-text {
+                background: linear-gradient(180deg, transparent 65%, #312e81 65%);
+                color: #e0e7ff;
+            }
+        }
+
+        /* Trivia Box Styling */
+        .trivia-box {
+            border-radius: 1.25rem;
+            padding: 2.5rem 3rem;
+            margin: 4rem 0;
+            position: relative;
+            background-color: #fffbeb;
+            border: 1px solid #fcd34d;
+        }
+        
+        @media (prefers-color-scheme: dark) {
+            .trivia-box {
+                background-color: rgba(120, 53, 15, 0.1);
+                border: 1px solid rgba(180, 83, 9, 0.4);
+            }
+        }
+
+        .trivia-badge {
+            position: absolute;
+            top: -16px;
+            left: 32px;
+            background: linear-gradient(135deg, #d97706, #b45309);
+            color: white;
+            padding: 6px 20px;
+            border-radius: 9999px;
+            font-weight: 800;
+            font-size: 0.9rem;
+            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
+            letter-spacing: 0.05em;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Quiz UI */
+        .quiz-input {
+            transition: all 0.2s ease;
+        }
+        .quiz-input:focus {
+            outline: none;
+            border-color: #6366f1;
+            box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.15);
+        }
+        .correct-answer {
+            background-color: #f0fdf4 !important;
+            border-color: #22c55e !important;
+            color: #15803d !important;
+            box-shadow: 0 0 0 1px #22c55e;
+        }
+        .incorrect-answer {
+            background-color: #fef2f2 !important;
+            border-color: #ef4444 !important;
+            color: #b91c1c !important;
+            box-shadow: 0 0 0 1px #ef4444;
+        }
+        
+        .feedback-box {
+            display: none;
+            margin-top: 1.5rem;
+            padding: 2rem;
+            border-radius: 1rem;
+            font-size: 1rem;
+            animation: fadeIn 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* KaTeX SVG fix */
+        foreignObject { overflow: visible; }
+        
+        .hero-gradient {
+            background: linear-gradient(135deg, #4f46e5 0%, #0ea5e9 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        /* Math formula specific styling */
+        .math-block {
+            overflow-x: auto;
+            padding: 1rem 0;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-900 dark:bg-slate-950 dark:text-slate-100 selection:bg-indigo-200 dark:selection:bg-indigo-900">
+
+    <!-- Navigation -->
+    <nav class="sticky top-0 z-40 glass-morphism">
+        <div class="max-w-7xl mx-auto px-6 h-20 flex items-center justify-between">
+            <div class="flex items-center gap-3">
+                <!-- Expansion/Factorization Icon (Parentheses) -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" class="text-indigo-600 dark:text-indigo-400" viewBox="0 0 24 24">
+                     <path d="M4 19a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2" />
+                     <path d="M4 5a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2" />
+                     <path d="M12 8v8" />
+                </svg>
+                <span class="font-bold text-lg tracking-tight hidden sm:block">Archive: Polynomials</span>
+            </div>
+            <button id="quizTrigger" class="group bg-slate-900 text-white dark:bg-indigo-600 dark:text-white px-6 py-3 rounded-full font-bold shadow-lg hover:shadow-xl hover:scale-105 transition-all duration-300 flex items-center gap-3 text-sm md:text-base border border-transparent hover:border-indigo-400">
+                <!-- Bootstrap Icon: pencil-square -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="transition-transform group-hover:rotate-12" viewBox="0 0 16 16">
+                    <path d="M15.502 1.94a.5.5 0 0 1 0 .706L14.459 3.69l-2-2L13.502.646a.5.5 0 0 1 .707 0l1.293 1.293zm-1.75 2.456-2-2L4.939 9.21a.5.5 0 0 0-.121.196l-.805 2.414a.25.25 0 0 0 .316.316l2.414-.805a.5.5 0 0 0 .196-.12l6.813-6.814z"/>
+                    <path fill-rule="evenodd" d="M1 13.5A1.5 1.5 0 0 0 2.5 15h11a1.5 1.5 0 0 0 1.5-1.5v-6a.5.5 0 0 0-1 0v6a.5.5 0 0 1-.5.5h-11a.5.5 0 0 1-.5-.5v-11a.5.5 0 0 1 .5-.5H9a.5.5 0 0 0 0-1H2.5A1.5 1.5 0 0 0 1 2.5v11z"/>
+                </svg>
+                <span>無限演習ジェネレーター</span>
+            </button>
+        </div>
+    </nav>
+
+    <main class="max-w-4xl mx-auto px-6 py-24">
+        
+        <!-- Hero Section -->
+        <header class="text-center mb-32">
+            <div class="inline-block px-4 py-1.5 rounded-full bg-indigo-50 border border-indigo-100 text-indigo-700 dark:bg-indigo-900/30 dark:border-indigo-800 dark:text-indigo-300 text-xs font-bold uppercase tracking-widest mb-6">
+                Constructing and Deconstructing
+            </div>
+            <h1 class="text-5xl md:text-8xl font-black mb-10 tracking-tight leading-tight">
+                <span class="hero-gradient">式の展開と因数分解</span>
+            </h1>
+            <p class="text-xl md:text-2xl text-slate-600 dark:text-slate-400 serif-text max-w-3xl mx-auto leading-loose">
+                積を和の形に解き放つ「展開」と、和を積の形に凝縮する「因数分解」。<br>
+                この可逆的な操作は、数学における建築と解体である。<br>
+                長方形の面積モデルから導かれる、代数学の美しい対称性を紐解く。
+            </p>
+        </header>
+
+        <!-- Chapter 1: Essence -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第1章：面積モデルと可逆性</h2>
+            <div class="serif-text">
+                <p>
+                    <strong>式の展開（Expansion）</strong>と<strong>因数分解（Factorization）</strong>は、コインの裏表のような関係にある。展開とは「括弧を外してバラバラにすること（積→和）」であり、因数分解とは「共通の要素で括ってまとめること（和→積）」である。
+                </p>
+
+                <p>
+                    この抽象的な操作を理解する鍵は「長方形の面積」にある。縦が $(x+a)$、横が $(x+b)$ の長方形の面積をどう計算するか？ 全体を一つの大きな長方形として見れば $(x+a)(x+b)$ だが、分割された4つの小部屋の合計として見れば $x^2 + ax + bx + ab$ となる。この二つの視点が等しいという事実こそが、展開公式の本質なのである。
+                </p>
+
+                <div class="diagram-box">
+                    <h4 class="text-lg font-bold mb-12 text-slate-700 dark:text-slate-300 tracking-wider">面積図による展開の可視化</h4>
+                    
+                    <!-- Area Model Visualization -->
+                    <div class="relative flex flex-col items-center justify-center p-4 w-full max-w-md">
+                        
+                        <!-- Grid Container -->
+                        <div class="grid grid-cols-[auto_1fr_1fr] grid-rows-[auto_1fr_1fr] gap-1">
+                            
+                            <!-- Headers (Top) -->
+                            <div class="w-8 h-8"></div> <!-- Corner spacer -->
+                            <div class="flex items-center justify-center font-serif text-slate-600 dark:text-slate-400 font-bold italic">$x$</div>
+                            <div class="flex items-center justify-center font-serif text-slate-600 dark:text-slate-400 font-bold italic">$b$</div>
+
+                            <!-- Headers (Left) -->
+                            <div class="flex items-center justify-center font-serif text-slate-600 dark:text-slate-400 font-bold italic h-24">$x$</div>
+                            
+                            <!-- Box: x^2 -->
+                            <div class="bg-indigo-100 dark:bg-indigo-900/40 border border-indigo-200 dark:border-indigo-700 w-24 h-24 flex items-center justify-center text-xl font-bold text-indigo-800 dark:text-indigo-200">
+                                $x^2$
+                            </div>
+                            
+                            <!-- Box: bx -->
+                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 w-32 h-24 flex items-center justify-center text-xl font-bold text-blue-800 dark:text-blue-200">
+                                $bx$
+                            </div>
+
+                            <!-- Headers (Left) Row 2 -->
+                            <div class="flex items-center justify-center font-serif text-slate-600 dark:text-slate-400 font-bold italic h-16">$a$</div>
+
+                            <!-- Box: ax -->
+                            <div class="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-700 w-24 h-16 flex items-center justify-center text-xl font-bold text-blue-800 dark:text-blue-200">
+                                $ax$
+                            </div>
+
+                            <!-- Box: ab -->
+                            <div class="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-600 w-32 h-16 flex items-center justify-center text-xl font-bold text-slate-600 dark:text-slate-400">
+                                $ab$
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <p class="text-sm text-slate-500 dark:text-slate-400 mt-8 italic text-center max-w-lg">
+                        全体の面積 $(x+a)(x+b)$ は、4つの部分面積の和<br>
+                        $x^2 + ax + bx + ab$ に等しい。
+                    </p>
+                </div>
+
+                <div class="equation-box text-slate-900 dark:text-slate-100 shadow-sm">
+                    $$ (x+a)(x+b) = x^2 + (a+b)x + ab $$
+                </div>
+
+                <h3 class="sub-section-title">因数分解：素数への回帰</h3>
+                <p>
+                    因数分解は、数の世界における「素因数分解」の多項式バージョンである。
+                    $12$ を $2 \times 2 \times 3$ に分解するように、$x^2 - 4$ を $(x+2)(x-2)$ に分解する。
+                    これにより、方程式の解を見つけたり、式の性質を分析したりすることが容易になる。
+                    「これ以上分解できない状態（既約多項式）」まで要素還元していくプロセスは、複雑な現象をシンプルな原理に分解する科学的思考そのものである。
+                </p>
+
+                <!-- Trivia 1 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：因数分解の英語
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        因数分解は英語で "Factorization" という。"Factor" は「要因、要素」を意味し、工場（Factory）と同じ語源を持つ。「結果（積）」を作るための「材料（因数）」に分解するというニュアンスが含まれている。ちなみに、式を展開することは "Expansion"（拡張、展開）と呼ぶ。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 1.5: Calculation (Expanded) -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">実践：乗法公式のマスター</h2>
+            <div class="serif-text">
+                <p>
+                    すべての展開・因数分解の基本となるのが「乗法公式」である。これらは暗記するものではなく、式の「形（パターン）」として視覚的に認識すべきものである。
+                </p>
+
+                <!-- Pattern 1: Square of Sum/Diff -->
+                <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-2xl border border-indigo-100 dark:border-indigo-800 mb-10">
+                    <p class="font-bold text-indigo-900 dark:text-indigo-200 mb-4 flex items-center gap-2">
+                        <span class="bg-indigo-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">1</span>
+                        平方の公式：$(a \pm b)^2$
+                    </p>
+                    <div class="pl-4 border-l-2 border-indigo-200 dark:border-indigo-700 mb-6">
+                        <div class="math-block text-center font-bold text-xl my-4 text-indigo-700 dark:text-indigo-300">
+                            $$ (a \pm b)^2 = a^2 \pm 2ab + b^2 $$
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400">
+                            「前の2乗、前後掛けて2倍、後ろの2乗」。
+                            因数分解の際は、「両端が平方数で、真ん中がその積の2倍」になっているかを確認する。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Pattern 2: Difference of Squares -->
+                <div class="bg-rose-50 dark:bg-rose-900/20 p-8 rounded-2xl border border-rose-100 dark:border-rose-800 mb-8">
+                    <p class="font-bold text-rose-900 dark:text-rose-200 mb-4 flex items-center gap-2">
+                        <span class="bg-rose-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">2</span>
+                        和と差の積：$(a+b)(a-b)$
+                    </p>
+                    <div class="pl-4 border-l-2 border-rose-200 dark:border-rose-700">
+                        <div class="math-block text-center font-bold text-xl my-4 text-rose-700 dark:text-rose-300">
+                            $$ (a+b)(a-b) = a^2 - b^2 $$
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                            最も美しい公式。「2乗引く2乗」の形を見たら、即座に「和と差の積」に因数分解できる。
+                            計算の工夫（例：$102 \times 98 = (100+2)(100-2)$）でも頻出する。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Pattern 3: Sum and Product -->
+                <div class="bg-emerald-50 dark:bg-emerald-900/10 p-8 rounded-2xl border border-emerald-100 dark:border-emerald-800 mb-8">
+                    <p class="font-bold text-emerald-900 dark:text-emerald-200 mb-4 flex items-center gap-2">
+                        <span class="bg-emerald-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs">3</span>
+                        和と積の公式：$(x+a)(x+b)$
+                    </p>
+                    <div class="pl-4 border-l-2 border-emerald-200 dark:border-emerald-700">
+                        <div class="math-block text-center font-bold text-xl my-4 text-emerald-700 dark:text-emerald-300">
+                            $$ x^2 + (a+b)x + ab = (x+a)(x+b) $$
+                        </div>
+                        <p class="text-sm text-slate-600 dark:text-slate-400 mb-4">
+                            因数分解の基本戦略。「掛けて定数項、足して $x$ の係数」になる2つの数を見つけるパズルである。
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Trivia 2 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：たすき掛け（Tasuki-gake）
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        $acx^2 + (ad+bc)x + bd = (ax+b)(cx+d)$ のような複雑な因数分解を行う際、日本では「たすき掛け」という図式的手法が教えられる。
+                        係数をクロス（たすき）状に掛けて和を確認する方法だが、これは江戸時代の和算には存在せず、明治時代以降に西洋数学が導入された際、計算を効率化するために日本で独自に工夫・定着した教育技法の一つと言われている。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 2: History -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第2章：アル＝フワーリズミーと幾何学的代数</h2>
+            <div class="serif-text text-xl leading-relaxed">
+                <p>
+                    式の展開や因数分解のルーツは、古代の「幾何学的代数」にある。記号が発明される遥か昔、数学者たちは図形を使ってこれらを証明していた。
+                </p>
+                
+                <h3 class="sub-section-title">アル＝フワーリズミーの「平方完成」</h3>
+                <p>
+                    9世紀の数学者アル＝フワーリズミーは、2次方程式 $x^2 + 10x = 39$ を解くために、幾何学的なアプローチをとった。
+                    彼は $x^2$ の正方形に、$10x$ を2分割した長方形を継ぎ足し、さらに小さな正方形（$5^2$）を加えることで、全体を完全な正方形（平方）に作り変えた。
+                    これが現代の「平方完成」による因数分解の起源であり、代数学（Algebra）という言葉も彼の著書『アル＝ジャブル』に由来する。
+                </p>
+
+                <h3 class="sub-section-title">ユークリッド原論における展開公式</h3>
+                <p>
+                    紀元前300年頃のユークリッド『原論』第2巻には、現代の $(a+b)^2 = a^2 + 2ab + b^2$ に相当する命題が記述されている。
+                    ただし、当時は数式ではなく「ある線分を任意に分割したとき、全体上の正方形は...」という長い文章と図形で説明されていた。
+                    数式という「記号の操作」だけで計算できるようになったのは、16世紀のヴィエトや17世紀のデカルト以降のことであり、それまでは展開も因数分解も、常に図形をイメージする高度な作業だったのだ。
+                </p>
+            </div>
+        </section>
+
+        <!-- Chapter 3: Logic -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第3章：代数学の基本定理への道</h2>
+            <div class="serif-text text-xl leading-relaxed">
+                <p>
+                    因数分解は単なる式変形ではない。それは方程式の「解」を見つけるための最強のツールである。
+                </p>
+
+                <h3 class="sub-section-title">因数分解と方程式の解</h3>
+                <p>
+                    もし多項式 $P(x)$ が $(x-a)(x-b) = 0$ と因数分解できたなら、その解は即座に $x=a, x=b$ であると分かる。
+                    なぜなら、「掛けてゼロになるなら、どちらかがゼロでなければならない」という論理が働くからだ。
+                    逆に言えば、解が分かれば因数分解ができる（因数定理）。因数分解と方程式の解は、表裏一体の関係にある。
+                </p>
+                
+                <h3 class="sub-section-title">一意分解整域（UFD）</h3>
+                <p>
+                    整数が素因数分解によって一意に（ただ一通りに）分解できるように、多項式もまた「既約多項式」の積として一意に分解できる。
+                    この性質を持つ代数系を「一意分解整域（Unique Factorization Domain）」と呼ぶ。
+                    私たちが $x^2-1$ を $(x+1)(x-1)$ 以外に分解できないのは、数学の深い構造的秩序によるものなのだ。
+                </p>
+
+                <!-- Trivia 3 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：複素数での因数分解
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        実数の範囲では $x^2 + 1$ はこれ以上因数分解できない。しかし、数の世界を「複素数」まで広げると、$x^2 + 1 = (x+i)(x-i)$ と分解できる（$i$ は虚数単位）。
+                        「代数学の基本定理」によれば、複素数の範囲であれば、どのような $n$ 次多項式も必ず $n$ 個の1次式の積に因数分解できることが保証されている。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Chapter 4: Modern World -->
+        <section class="content-card bg-white border border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+            <h2 class="chapter-title text-slate-900 dark:text-slate-100">第4章：現代技術への応用</h2>
+            <div class="serif-text text-xl leading-relaxed">
+                <p>
+                    式の展開と因数分解の概念は、コンピュータサイエンスやセキュリティの分野でも重要な役割を果たしている。
+                </p>
+
+                <h3 class="sub-section-title">暗号技術と巨大数の分解</h3>
+                <p>
+                    現代のインターネット通信を守る「RSA暗号」は、「2つの巨大な素数を掛けて合成数を作る（展開に相当）のは簡単だが、その合成数を元の素数に戻す（因数分解）のは極めて困難である」という性質を利用している。
+                    多項式の因数分解とは少し異なるが、「分解の困難さ」をセキュリティの盾にしている点は共通している。
+                </p>
+
+                <h3 class="sub-section-title">誤り訂正符号とCRC</h3>
+                <p>
+                    デジタルデータの通信において、ノイズによるデータの破損を検知するために「CRC（巡回冗長検査）」が使われる。
+                    これはデータを「多項式」と見なし、特定の生成多項式で割り算を行った余りをチェックサムとして付加する技術である。
+                    ここでも多項式の演算や因数分解的な理論が、情報の正確な伝達を支えている。
+                </p>
+                
+                <!-- Trivia 4 -->
+                <div class="trivia-box">
+                    <span class="trivia-badge">
+                        豆知識：コンピュータグラフィックス
+                    </span>
+                    <p class="mb-0 text-sm leading-relaxed text-slate-700 dark:text-slate-300">
+                        映画やゲームの滑らかな曲線を表現する「ベジェ曲線」や「スプライン曲線」は、パラメータ $t$ を用いた多項式で定義される。
+                        これらの曲線をコンピュータ上で高速に描画・変形する際、多項式の展開や因数分解（ホーナー法などによる計算の効率化）のアルゴリズムが駆使されている。
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Summary -->
+        <section class="text-center py-24 bg-white rounded-3xl shadow-sm border border-slate-100 dark:bg-slate-900 dark:border-slate-800 relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-indigo-500 via-purple-500 to-pink-500"></div>
+            <div class="h-1 bg-indigo-100 dark:bg-indigo-900/30 w-32 mx-auto mb-12 rounded-full"></div>
+            <h2 class="text-4xl font-black mb-10 text-slate-800 dark:text-slate-100 tracking-tight">形の変容と保存</h2>
+            <p class="text-xl text-slate-500 dark:text-slate-400 max-w-3xl mx-auto serif-text leading-loose px-4">
+                展開して広げ、因数分解して畳む。<br>
+                数式は形を変えても、その本質的な価値（等価性）は変わらない。<br>
+                この自在な変形能力こそが、代数学の持つ最大の力であり、<br>
+                私たちが複雑な問題を解きほぐすための最強の武器なのである。
+            </p>
+        </section>
+
+    </main>
+
+    <!-- Quiz Panel -->
+    <div id="quizPanel" class="quiz-panel fixed top-0 right-0 h-full w-full md:w-[650px] bg-white shadow-2xl z-50 flex flex-col border-l border-slate-100 dark:bg-slate-900 dark:border-slate-800">
+        <!-- Panel Header -->
+        <div class="p-8 border-b flex justify-between items-center bg-indigo-900 text-white shadow-md dark:bg-slate-950 dark:border-slate-800">
+            <div>
+                <h3 class="text-2xl font-bold flex items-center gap-3">
+                    Practice Problems
+                </h3>
+                <p class="text-xs text-indigo-200 mt-1 uppercase tracking-widest pl-0">Infinite Random Generator</p>
+            </div>
+            <div class="flex gap-2">
+                <button id="generateBtn" class="px-5 py-2.5 bg-indigo-600 hover:bg-indigo-500 rounded-lg text-sm font-bold transition-all shadow-lg border border-indigo-400 flex items-center gap-2 dark:bg-indigo-700 dark:hover:bg-indigo-600 dark:border-indigo-600 transform active:scale-95">
+                    <!-- Bootstrap Icon: shuffle -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                        <path fill-rule="evenodd" d="M0 3.5A.5.5 0 0 1 .5 3H1c2.202 0 3.827 1.24 4.874 2.418.49.552.865 1.102 1.126 1.532.26-.43.636-.98 1.126-1.532C9.173 4.24 10.798 3 13 3v1c-1.798 0-3.173 1.01-4.126 2.082A9.624 9.624 0 0 0 7.556 8a9.624 9.624 0 0 0 1.317 1.918C9.828 10.99 11.204 12 13 12v1c-2.202 0-3.827-1.24-4.874-2.418A10.595 10.595 0 0 1 7 9.05c-.26.43-.636.98-1.126 1.532C4.827 11.76 3.202 13 1 13H.5a.5.5 0 0 1 0-1H1c1.798 0 3.173-1.01 4.126-2.082A9.624 9.624 0 0 0 6.444 8a9.624 9.624 0 0 0-1.317-1.918C4.172 5.01 2.796 4 1 4H.5a.5.5 0 0 1-.5-.5z"/>
+                        <path d="M13 5.466V1.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192zm0 9v-3.932a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384l-2.36 1.966a.25.25 0 0 1-.41-.192z"/>
+                    </svg>
+                    問題を生成
+                </button>
+                <button id="closeQuiz" class="p-2.5 hover:bg-indigo-800 rounded-lg transition-colors text-indigo-200 hover:text-white">
+                    <!-- Bootstrap Icon: x-lg -->
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                        <path d="M2.146 2.854a.5.5 0 1 1 .708-.708L8 7.293l5.146-5.147a.5.5 0 0 1 .708.708L8.707 8l5.147 5.146a.5.5 0 0 1-.708.708L8 8.707l-5.146 5.147a.5.5 0 0 1-.708-.708L7.293 8 2.146 2.854Z"/>
+                    </svg>
+                </button>
+            </div>
+        </div>
+
+        <!-- Quiz Content Area -->
+        <div class="flex-1 overflow-y-auto p-8 bg-slate-50 dark:bg-slate-900 scrollbar-thin">
+            <div id="quizContainer" class="space-y-12">
+                <div class="text-center text-slate-500 dark:text-slate-400 py-32 flex flex-col items-center justify-center h-full">
+                    <div class="bg-indigo-50 dark:bg-indigo-900/20 p-8 rounded-full mb-8 animate-pulse">
+                        <!-- Bootstrap Icon: patch-check-fill -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" fill="currentColor" class="text-indigo-400" viewBox="0 0 16 16">
+                            <path d="M10.067.87a2.89 2.89 0 0 0-4.134 0l-.622.638-.89-.011a2.89 2.89 0 0 0-2.924 2.924l.01.89-.636.622a2.89 2.89 0 0 0 0 4.134l.637.622-.011.89a2.89 2.89 0 0 0 2.924 2.924l.89.01.622.636a2.89 2.89 0 0 0 4.134 0l.622-.637.89.011a2.89 2.89 0 0 0 2.924-2.924l-.01-.89.636-.622a2.89 2.89 0 0 0 0-4.134l-.637-.622.011-.89a2.89 2.89 0 0 0-2.924-2.924l-.89-.01-.622-.636zM10.97 4.97a.75.75 0 0 1 1.071 1.05l-3.99 4.99a.75.75 0 0 1-1.08.02L4.324 8.384a.75.75 0 1 1 1.06-1.06l2.094 2.093 3.473-4.425a.267.267 0 0 1 .02-.022z"/>
+                        </svg>
+                    </div>
+                    <p class="text-2xl mb-3 font-bold text-slate-700 dark:text-slate-200">準備完了</p>
+                    <p class="text-slate-500 dark:text-slate-400 max-w-xs mx-auto">右上の「問題を生成」ボタンを押して、<br>自動生成プログラムによる演習を開始してください。</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="bg-slate-900 text-white py-24 text-center dark:bg-slate-950 dark:border-t dark:border-slate-800">
+        <p class="text-slate-500 mb-6 tracking-[0.4em] text-sm uppercase">Mathematical Archive Project</p>
+        <p class="text-sm opacity-40 serif-text italic max-w-md mx-auto leading-relaxed">
+            "Algebra is the intellectual instrument which has been created for rendering clear the quantitative aspects of the world."
+            <br>– Alfred North Whitehead
+        </p>
+    </footer>
+
+    <script>
+        // Global variables for the quiz
+        let currentQuestions = [];
+        
+        // --- 1. Math Render Logic ---
+        function renderMath() {
+            renderMathInElement(document.body, {
+                delimiters: [
+                    {left: "$$", right: "$$", display: true},
+                    {left: "$", right: "$", display: false}
+                ],
+                throwOnError: false
+            });
+        }
+
+        // --- 2. Problem Generation Algorithm (Polynomial Expansion & Factorization) ---
+        function generatePolynomials() {
+            const problems = [];
+            
+            // Generate 10 random problems
+            for (let i = 0; i < 10; i++) {
+                const type = Math.random();
+                let questionText = "";
+                let targetVal = 0;
+                let explanation = "";
+                let unit = ""; 
+
+                if (type < 0.3) {
+                    // Type 1: Expansion of (x+a)(x+b) -> Find sum of coefficients A+B in x^2+Ax+B
+                    // (x+a)(x+b) = x^2 + (a+b)x + ab
+                    // Problem asks for a+b (coefficient of x) or ab (constant term). Let's ask for the constant term.
+                    const a = Math.floor(Math.random() * 11) - 5; // -5 to 5
+                    const b = Math.floor(Math.random() * 11) - 5;
+                    const constTerm = a * b;
+                    const xCoeff = a + b;
+                    const signA = a >= 0 ? '+' : '';
+                    const signB = b >= 0 ? '+' : '';
+
+                    questionText = `式 $(x ${signA} ${a})(x ${signB} ${b})$ を展開したとき、定数項（数字だけの項）の値を求めなさい。`;
+                    targetVal = constTerm;
+                    explanation = `<strong>公式 $(x+a)(x+b) = x^2 + (a+b)x + ab$ を使う</strong><br>
+                    展開すると、<br>
+                    $x^2 + (${a} + ${b})x + (${a} \\times ${b})$<br>
+                    $= x^2 ${xCoeff >= 0 ? '+' : ''}${xCoeff}x ${constTerm >= 0 ? '+' : ''}${constTerm}$<br>
+                    定数項は $${constTerm}$ です。`;
+
+                } else if (type < 0.6) {
+                    // Type 2: Factorization x^2 + Sx + P -> Find the larger factor constant
+                    // Factorize x^2 + (a+b)x + ab -> (x+a)(x+b). Find max(a, b).
+                    const a = Math.floor(Math.random() * 8) + 1; // 1 to 8
+                    const b = Math.floor(Math.random() * 8) + 1;
+                    const sum = a + b;
+                    const prod = a * b;
+                    
+                    questionText = `式 $x^2 + ${sum}x + ${prod}$ を因数分解すると $(x+a)(x+b)$ の形になります。<br>$a, b$ のうち、大きい方の数を答えなさい。`;
+                    targetVal = Math.max(a, b);
+                    explanation = `<strong>「掛けて ${prod}、足して ${sum}」になる2数を探す</strong><br>
+                    積が ${prod} になる組み合わせ： $(1, ${prod}), ...$<br>
+                    和が ${sum} になるのは $${a}$ と $${b}$ のペアです。<br>
+                    よって $(x+${a})(x+${b})$ と因数分解できます。<br>
+                    大きい方の数は $${Math.max(a, b)}$ です。`;
+
+                } else if (type < 0.8) {
+                    // Type 3: Difference of Squares (Applied)
+                    // Calculate a^2 - b^2. e.g. 103^2 - 3^2
+                    // (100+k)^2 - k^2 or similar simple ones
+                    const base = (Math.floor(Math.random() * 9) + 1) * 10; // 10, 20... 90
+                    const diff = Math.floor(Math.random() * 5) + 1; // 1 to 5
+                    const a = base + diff; // e.g. 10+3=13
+                    const b = base - diff; // e.g. 10-3=7 -> No, let's do a^2 - b^2 where a=base+diff, b=diff
+                    // Actually, let's do simple number calc: a^2 - b^2
+                    const valA = Math.floor(Math.random() * 20) + 10; // 10-30
+                    const valB = Math.floor(Math.random() * 5) + 1; // 1-5
+                    // Make it suitable for (A+B)(A-B)
+                    // Let's use specific pattern: x^2 - y^2 where x+y or x-y is nice number?
+                    // Let's just ask to calculate using formula.
+                    const X = (Math.floor(Math.random() * 9) + 1) * 10 + Math.floor(Math.random() * 3); // e.g. 10, 11, 12...
+                    const Y = X - (Math.floor(Math.random() * 5) * 2); // X and Y same parity helps? No, any int.
+                    // Simple logic: Calculate A^2 - B^2
+                    const A = Math.floor(Math.random() * 20) + 20;
+                    const B = Math.floor(Math.random() * 10) + 1;
+                    const res = A*A - B*B;
+
+                    questionText = `乗法公式を利用して、$${A}^2 - ${B}^2$ を計算しなさい。`;
+                    targetVal = res;
+                    explanation = `<strong>2乗引く2乗は「和と差の積」</strong><br>
+                    $a^2 - b^2 = (a+b)(a-b)$ を利用します。<br>
+                    $(${A} + ${B})(${A} - ${B})$<br>
+                    $= ${A+B} \\times ${A-B}$<br>
+                    $= ${res}$`;
+
+                } else {
+                    // Type 4: Perfect Square Search
+                    // Find 'n' such that x^2 + 2ax + n is a perfect square
+                    unit = ""; // Applied badge trigger logic needs adjustment if I want badge
+                    // Let's use the special char trick from previous code if needed, or just let unit be empty.
+                    // Let's use "★" to trigger "応用問題" badge logic if preserved from previous code logic.
+                    // Since I'm providing full code, I can ensure logic works.
+                    unit = "★"; 
+                    const a = Math.floor(Math.random() * 9) + 1; // 1 to 9
+                    const mid = 2 * a;
+                    const ans = a * a;
+
+                    questionText = `多項式 $x^2 + ${mid}x + n$ が因数分解によって $(x+a)^2$ の形（完全平方式）になるとき、定数 $n$ の値を求めなさい。`;
+                    targetVal = ans;
+                    explanation = `<strong>半分の2乗</strong><br>
+                    $x$ の係数 $${mid}$ の半分は $${a}$ です。<br>
+                    完全平方式になるには、定数項がその2乗になっている必要があります。<br>
+                    $n = ${a}^2 = ${ans}$<br>
+                    （$(x+${a})^2 = x^2 + ${mid}x + ${ans}$ となります）`;
+                }
+
+                problems.push({
+                    id: i + 1,
+                    text: questionText,
+                    val: targetVal,
+                    explanation: explanation,
+                    unit: unit
+                });
+            }
+            
+            return problems;
+        }
+
+        // --- 3. Rendering Quiz HTML ---
+        function generateQuizHTML() {
+            currentQuestions = generatePolynomials();
+            const container = document.getElementById('quizContainer');
+            container.innerHTML = ''; // Clear
+
+            currentQuestions.forEach(q => {
+                const card = document.createElement('div');
+                card.className = "bg-white p-8 rounded-3xl border border-slate-200 shadow-sm transition-all hover:shadow-md dark:bg-slate-800 dark:border-slate-700 relative overflow-hidden";
+                
+                // Logic to show "応用問題" badge if unit is special char
+                const badgeHtml = q.unit === "★" ? `<span class="text-xs font-bold text-slate-400 bg-slate-100 dark:bg-slate-700 px-2 py-1 rounded">応用問題</span>` : '';
+                const displayUnit = q.unit === "★" ? "" : q.unit;
+
+                card.innerHTML = `
+                    <div class="absolute top-0 left-0 w-2 h-full bg-indigo-500"></div>
+                    <div class="flex items-center gap-3 mb-5">
+                        <span class="bg-indigo-100 text-indigo-700 dark:bg-indigo-900 dark:text-indigo-200 font-bold px-4 py-1.5 rounded-full text-sm tracking-wide">Q.${q.id}</span>
+                        ${badgeHtml}
+                    </div>
+                    <div class="text-slate-800 dark:text-slate-200 mb-8 text-lg leading-relaxed font-medium serif-text">
+                        ${q.text}
+                    </div>
+                    <div class="flex gap-4 items-center mb-6">
+                        <input type="number" id="q${q.id}-input" class="quiz-input w-full p-4 border-2 border-slate-200 rounded-2xl font-bold text-xl text-slate-700 placeholder-slate-300 dark:bg-slate-900 dark:border-slate-600 dark:text-slate-100" placeholder="答えを入力" step="1">
+                        <span class="font-bold text-slate-400 text-xl whitespace-nowrap">${displayUnit}</span>
+                    </div>
+                    <button onclick="checkAnswer(${q.id})" class="group w-full bg-slate-800 text-white font-bold py-4 rounded-2xl hover:bg-slate-700 transition-all shadow-lg shadow-slate-200 dark:bg-slate-700 dark:hover:bg-slate-600 dark:shadow-none flex items-center justify-center gap-2">
+                        <span>答え合わせ</span>
+                        <!-- Bootstrap Icon: arrow-right-circle -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="currentColor" class="opacity-50 group-hover:opacity-100 transition-opacity" viewBox="0 0 16 16">
+                           <path fill-rule="evenodd" d="M1 8a7 7 0 1 0 14 0A7 7 0 0 0 1 8zm15 0A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM4.5 7.5a.5.5 0 0 0 0 1h5.793l-2.147 2.146a.5.5 0 0 0 .708.708l3-3a.5.5 0 0 0 0-.708l-3-3a.5.5 0 1 0-.708.708L10.293 7.5H4.5z"/>
+                        </svg>
+                    </button>
+                    
+                    <div id="q${q.id}-feedback" class="feedback-box bg-slate-100 dark:bg-slate-900/50"></div>
+                `;
+                container.appendChild(card);
+            });
+
+            // Re-render MathJax/KaTeX for the new content
+            renderMath();
+        }
+
+        // --- 4. Validation Logic ---
+        function checkAnswer(qId) {
+            // qId is 1-based index
+            const data = currentQuestions[qId - 1];
+            const input = document.getElementById(`q${qId}-input`);
+            const feedback = document.getElementById(`q${qId}-feedback`);
+            const userVal = parseInt(input.value);
+
+            feedback.style.display = 'block';
+            input.classList.remove('correct-answer', 'incorrect-answer');
+
+            // Exact match for integer answers
+            if (userVal === data.val) {
+                // Correct
+                input.classList.add('correct-answer');
+                feedback.innerHTML = `
+                    <div class="text-green-700 dark:text-green-400 font-bold text-lg mb-3 flex items-center gap-2">
+                        <!-- Bootstrap Icon: check-circle-fill -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zm-3.97-3.03a.75.75 0 0 0-1.08.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-.01-1.05z"/>
+                        </svg>
+                        正解です！
+                    </div>
+                    <div class="mt-3 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-green-200 dark:border-green-800 text-slate-700 dark:text-slate-300 shadow-sm leading-relaxed">
+                        <strong class="text-green-800 dark:text-green-300 block mb-2 text-sm uppercase tracking-wider">Solution</strong>
+                        ${data.explanation}
+                    </div>
+                `;
+                feedback.className = "feedback-box bg-green-50 border border-green-200 dark:bg-green-900/20 dark:border-green-800";
+            } else {
+                // Incorrect
+                input.classList.add('incorrect-answer');
+                const displayUnit = (data.unit && data.unit !== "★") ? data.unit : "";
+                
+                feedback.innerHTML = `
+                    <div class="text-red-700 dark:text-red-400 font-bold text-lg mb-3 flex items-center gap-2">
+                        <!-- Bootstrap Icon: x-circle-fill -->
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="currentColor" viewBox="0 0 16 16">
+                            <path d="M16 8A8 8 0 1 1 0 8a8 8 0 0 1 16 0zM5.354 4.646a.5.5 0 1 0-.708.708L7.293 8l-2.647 2.646a.5.5 0 0 0 .708.708L8 8.707l2.646 2.647a.5.5 0 0 0 .708-.708L8.707 8l2.647-2.646a.5.5 0 0 0-.708-.708L8 7.293 5.354 4.646z"/>
+                        </svg>
+                        不正解です...
+                    </div>
+                    <p class="text-slate-600 dark:text-slate-400 mb-4 text-sm">計算ミスか符号の間違いがあるようです。公式を確認しましょう。</p>
+                    <div class="pt-4 border-t border-red-200 dark:border-red-800">
+                        <button onclick="document.getElementById('reveal-${qId}').classList.remove('hidden')" class="text-red-600 dark:text-red-400 font-bold text-sm hover:text-red-800 dark:hover:text-red-300 underline decoration-2 underline-offset-4">
+                            答えと解説を見る
+                        </button>
+                        <div id="reveal-${qId}" class="hidden mt-4 bg-white dark:bg-slate-800 p-5 rounded-2xl border border-red-200 dark:border-red-800 text-slate-700 dark:text-slate-300 shadow-sm leading-relaxed">
+                             <div class="mb-3 text-lg font-bold text-red-700 dark:text-red-400 border-b border-red-100 dark:border-red-900 pb-2">正解：${data.val} ${displayUnit}</div>
+                             <div class="text-sm">${data.explanation}</div>
+                        </div>
+                    </div>
+                `;
+                feedback.className = "feedback-box bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800";
+            }
+            renderMath(); // Re-render math in feedback
+        }
+
+        // --- 5. Event Listeners ---
+        const quizTrigger = document.getElementById('quizTrigger');
+        const quizPanel = document.getElementById('quizPanel');
+        const closeQuiz = document.getElementById('closeQuiz');
+        const generateBtn = document.getElementById('generateBtn');
+
+        quizTrigger.addEventListener('click', () => {
+            quizPanel.classList.add('active');
+            if (currentQuestions.length === 0) {
+                // Initial prompt is shown, user clicks generate
+            }
+        });
+
+        closeQuiz.addEventListener('click', () => {
+            quizPanel.classList.remove('active');
+        });
+
+        generateBtn.addEventListener('click', () => {
+            generateQuizHTML();
+            const container = document.getElementById('quizContainer');
+            if (container) container.scrollTop = 0;
+        });
+
+        // Initialize KaTeX on load
+        document.addEventListener("DOMContentLoaded", function() {
+            renderMath();
+        });
+    </script>
+</body>
+</html>
